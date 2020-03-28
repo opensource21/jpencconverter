@@ -1,0 +1,61 @@
+image: maven:3.6.1-jdk-8-slim
+
+variables:
+  MAVEN_CLI_OPTS: "--batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  ZIP_NAME: jpenc-converter.zip
+
+stages:
+  - build
+  - test
+  - package
+  - publish
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+  key:
+    "$CI_COMMIT_SHA"
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean compile
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    when: on_failure
+    expire_in: 30 days
+    paths:
+      - log
+      - target/surefire-reports
+
+package:
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends zip && rm -rf /var/lib/apt/lists/*
+  stage: package
+  script:
+    - mvn $MAVEN_CLI_OPTS package  -DskipTests
+    - cp target/jpencconverter-*.jar .
+    - cp src/main/resources/application.properties application.properties.sample
+    - zip -r $ZIP_NAME jpencconverter-*.jar application.properties.sample README.md
+  artifacts:
+    expire_in: 3 days
+    paths:
+      - target/*.jar
+      - $ZIP_NAME
+
+publish:
+  # See https://github.com/inetprocess/gitlab-release/blob/master/README.md for Details
+  ## Set a secret variable in your project named GITLAB_ACCESS_TOKEN with api-access-Token
+  image: inetprocess/gitlab-release
+  stage: publish
+  only:
+    - tags
+  script:
+    - gitlab-release --message "$CI_COMMIT_MESSAGE" $ZIP_NAME target/jpencconverter*.jar
+
