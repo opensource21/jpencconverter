@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The config file will never be reloaded -->
+<Configuration monitorInterval="0">
+    <!-- It is possible to define some values which can be used in the further
+        config file -->
+    <Properties>
+        <!-- The pattern outputs "Date [Threadname] Loggername - LEVEL: Message" -->
+        <Property name="log_format">%d{yyyy-MM-dd HH:mm:ss,SSS} [%-10t] %-35c{1.} - %-5level: %m%n</Property>
+        <Property name="log_path">${env:LOG_DIR:-${sys:log.dir:-log}}</Property>
+        <Property name="log_file">jpencconverter</Property>
+    </Properties>
+    <!-- First all the appenders are described -->
+    <Appenders>
+        <!-- The standard console appender -->
+        <Console name="console" target="SYSTEM_OUT">
+            <!-- Here the property from above is used -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} - %-5level: %m%n"/>
+        </Console>
+
+        <RollingFile name="rollingFile" append="true"
+                     filePattern="${log_path}/${log_file}-%i.log"
+                     fileName="${log_path}/${log_file}.log">
+            <!-- Here the property from above is used -->
+            <PatternLayout pattern="${log_format}"/>
+            <!-- Now the policies are described when to start a new file -->
+            <Policies>
+                <!-- Second there is a size based policy - causing a new file after the
+                    given file is 5MB big -->
+                <SizeBasedTriggeringPolicy size="5MB"/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <!-- The last point is the rollover strategy -->
+            <DefaultRolloverStrategy/>
+
+        </RollingFile>
+
+    </Appenders>
+    <!-- Now the loggers can be described using the appenders -->
+    <Loggers>
+        <!-- A specific logger for the taskengine - every appender specified in
+            the root logger is also triggered -->
+        <Root level="info">
+            <AppenderRef ref="rollingFile"/>
+            <AppenderRef ref="console"/>
+        </Root>
+        <Logger level="debug" name="de.stanetz"/>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,10 @@
+* text=auto !eol
+
+# Sh-Skripte linefeed
+*.sh text eol=lf
+*.cmd test eol=crlf
+
+*.jenc binary
+
+*.jar binary
+
