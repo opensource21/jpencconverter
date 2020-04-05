@@ -18,7 +18,7 @@
     {
       "name": "extension.encrypt",
       "type": "java.lang.String",
-      "description": "Extension of encrypted files."
+      "description": "Extension of encrypted files [Optional, default .jenc]."
     },
     {
       "name": "extensions.plainText",
@@ -28,7 +28,7 @@
     {
       "name": "password",
       "type": "java.lang.String",
-      "description": "The password for cryptografie."
+      "description": "The password for cryptografie. [Optional]"
     }
   ]
 }

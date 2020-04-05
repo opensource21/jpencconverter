@@ -32,7 +32,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
     @Value("${filesearch.decdir}")
     private String decryptedDir;
 
-    @Value("${extension.encrypt}")
+    @Value("${extension.encrypt:" + JavaPasswordbasedCryption.DEFAULT_ENCRYPTION_EXTENSION + "}")
     private String encryptExtension;
 
     @Value("#{'${extensions.plainText}'.split(',')}")

@@ -27,7 +27,10 @@ import java.util.Random;
  */
 @SuppressWarnings("unused")
 public class JavaPasswordbasedCryption {
-
+    /**
+     * Recommended extension for encrypted files.
+     */
+    public static final String DEFAULT_ENCRYPTION_EXTENSION = ".jenc";
     private final Version version;
     private final Random random;
 
