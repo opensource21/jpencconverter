@@ -81,11 +81,14 @@ class JpencConverterApplicationTests {
     @Test
     void testDirEnDecryption() throws Exception {
         final Path encryptedFile = Paths.get(encryptedDir, "dir1", "Test1-1.md.jenc");
+        final Path encryptedFile2 = Paths.get(encryptedDir, "dir1", "dir1.1", "Test1-1-1.md.jenc");
         final Path decryptedFile = Paths.get(decryptedDir, "dir2", "Test3.md");
         try {
             fileEncryptionService.decryptTextFilesInPath(password.toCharArray());
             final List<String> decryptText = decryptText(encryptedFile);
             assertThat(decryptText).containsExactly(FIRST_LINE, SECOND_LINE);
+            final List<String> decryptText2= decryptText(encryptedFile2);
+            assertThat(decryptText2).containsExactly(FIRST_LINE, SECOND_LINE);
             final List<String> plainText = Files.readAllLines(decryptedFile);
             assertThat(plainText).containsExactly(FIRST_LINE, SECOND_LINE);
         } finally {
