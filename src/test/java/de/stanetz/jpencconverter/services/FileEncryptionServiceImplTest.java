@@ -56,8 +56,8 @@ class FileEncryptionServiceImplTest {
 
     @Test
     void test2decryptOldTextFileInPath() throws IOException {
-        final Path file1 = Paths.get(TEST_DECRYPTED, "Test1.md");
-        final Path file2 = Paths.get(TEST_DECRYPTED, "Test2.md");
+        final Path file1 = Paths.get(TEST_DECRYPTED, "dir1", "Test1.md");
+        final Path file2 = Paths.get(TEST_DECRYPTED, "dir1", "Test2.md");
         try {
             testee.decryptTextFilesInPath(password);
             assertThat(file1).exists();
@@ -105,13 +105,15 @@ class FileEncryptionServiceImplTest {
     }
 
     private Path createFile(String name) throws IOException {
-        final Path path = Paths.get(TEST_DECRYPTED, name);
+        final Path path = Paths.get(TEST_DECRYPTED, "dir1", name);
+        Files.createDirectories(path.getParent());
         Files.write(path, Arrays.asList(FIRST_LINE, SECOND_LINE));
         return path;
     }
 
     private Path createEncryptedFile(String name) throws IOException {
-        final Path result = Paths.get(TEST_DECRYPTED, name);
+        final Path result = Paths.get(TEST_DECRYPTED, "dir2", name);
+        Files.createDirectories(result.getParent());
         final Path path = getEncryptedPath(result);
         final JavaPasswordbasedCryption javaPasswordbasedCryption = new JavaPasswordbasedCryption(JavaPasswordbasedCryption.Version.V001, new SecureRandom());
         final byte[] encrypt = javaPasswordbasedCryption.encrypt(String.join(System.lineSeparator(), Arrays.asList(FIRST_LINE, SECOND_LINE)), password.clone());
@@ -129,7 +131,7 @@ class FileEncryptionServiceImplTest {
     }
 
     private Path getEncryptedPath(Path file) {
-        return Paths.get(TEST_ENCRYPTED, file.getFileName() + ".jenc");
+        return Paths.get(TEST_ENCRYPTED, "dir1", file.getFileName() + ".jenc");
     }
 
 }

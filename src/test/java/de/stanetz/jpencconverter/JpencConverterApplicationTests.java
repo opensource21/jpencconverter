@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -57,7 +58,6 @@ class JpencConverterApplicationTests {
             Files.copy(encryptedFile, encryptedFile2);
         } finally {
             Files.deleteIfExists(encryptedFile);
-
         }
     }
 
@@ -74,6 +74,25 @@ class JpencConverterApplicationTests {
         } finally {
             Files.deleteIfExists(encryptedFile);
             Files.deleteIfExists(decryptedFile);
+        }
+    }
+
+
+    @Test
+    void testDirEnDecryption() throws Exception {
+        final Path encryptedFile = Paths.get(encryptedDir, "dir1", "Test1-1.md.jenc");
+        final Path decryptedFile = Paths.get(decryptedDir, "dir2", "Test3.md");
+        try {
+            fileEncryptionService.decryptTextFilesInPath(password.toCharArray());
+            final List<String> decryptText = decryptText(encryptedFile);
+            assertThat(decryptText).containsExactly(FIRST_LINE, SECOND_LINE);
+            final List<String> plainText = Files.readAllLines(decryptedFile);
+            assertThat(plainText).containsExactly(FIRST_LINE, SECOND_LINE);
+        } finally {
+            Files.deleteIfExists(encryptedFile);
+            Files.deleteIfExists(decryptedFile);
+            FileSystemUtils.deleteRecursively(Paths.get(decryptedDir, "dir2"));
+            FileSystemUtils.deleteRecursively(Paths.get(encryptedDir, "dir1"));
         }
     }
 

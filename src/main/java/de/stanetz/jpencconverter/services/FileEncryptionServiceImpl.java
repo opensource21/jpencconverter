@@ -66,6 +66,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
 
     private void encryptText(char[] password, Path oldFile) throws IOException, JavaPasswordbasedCryption.EncryptionFailedException {
         final Path newFile = Paths.get(oldFile.toString().replace(decryptedDir, encryptedDir) + encryptExtension);
+        Files.createDirectories(newFile.getParent());
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
             final byte[] encrypt = new JavaPasswordbasedCryption(JavaPasswordbasedCryption.Version.V001, random)
@@ -110,6 +111,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
             IOException, JavaPasswordbasedCryption.EncryptionFailedException {
         final String newFilenameWithEncExtension = oldFile.toString().replace(encryptedDir, decryptedDir);
         final Path newFile = Paths.get(newFilenameWithEncExtension.substring(0, newFilenameWithEncExtension.length() - encryptExtension.length()));
+        Files.createDirectories(newFile.getParent());
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
             final byte[] encryptedBytes = Files.readAllBytes(oldFile);
