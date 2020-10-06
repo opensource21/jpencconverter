@@ -66,7 +66,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
 
     private void encryptText(char[] password, Path oldFile) throws IOException, JavaPasswordbasedCryption.EncryptionFailedException {
         final Path newFile = Paths.get(oldFile.toString().replace(decryptedDir, encryptedDir) + encryptExtension);
-        Files.createDirectories(newFile.getParent());
+        ensureParentDirExist(newFile);
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
             final byte[] encrypt = new JavaPasswordbasedCryption(JavaPasswordbasedCryption.Version.V001, random)
@@ -111,7 +111,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
             IOException, JavaPasswordbasedCryption.EncryptionFailedException {
         final String newFilenameWithEncExtension = oldFile.toString().replace(encryptedDir, decryptedDir);
         final Path newFile = Paths.get(newFilenameWithEncExtension.substring(0, newFilenameWithEncExtension.length() - encryptExtension.length()));
-        Files.createDirectories(newFile.getParent());
+        ensureParentDirExist(newFile);
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
             final byte[] encryptedBytes = Files.readAllBytes(oldFile);
@@ -123,6 +123,12 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
             logger.info("{} has same modification time than {} and will not be decrypted.", newFile, oldFile);
         } else {
             logger.warn("{} is newer than {} and will not be decrypted.", newFile, oldFile);
+        }
+    }
+
+    private void ensureParentDirExist(Path newFile) throws IOException {
+        if (!Files.exists(newFile.getParent())) {
+            Files.createDirectories(newFile.getParent());
         }
     }
 

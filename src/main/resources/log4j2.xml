@@ -16,6 +16,9 @@
         <Console name="console" target="SYSTEM_OUT">
             <!-- Here the property from above is used -->
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} - %-5level: %m%n"/>
+            <filters>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </filters>
         </Console>
 
         <RollingFile name="rollingFile" append="true"
