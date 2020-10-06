@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,12 +51,11 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
         }
         logger.debug("Analyze for encrypt {}", decryptPath);
         final Set<String> plainTextExtensionSet = new HashSet<>(plainTextExtensions);
-        try (Stream<Path> stream = Files.walk(decryptPath, depth)) {
+        try (Stream<Path> stream = Files.walk(decryptPath, depth, FileVisitOption.FOLLOW_LINKS)) {
             stream.filter(file -> !Files.isDirectory(file))
                     .filter(file -> plainTextExtensionSet.contains(getExtension(file.getFileName().toString())))
                     .forEach(it -> {
                         try {
-                            logger.debug("Encrypt Text of {}", it);
                             encryptText(password, it);
                         } catch (IOException | JavaPasswordbasedCryption.EncryptionFailedException e) {
                             logger.error("Can't encrypt " + it, e);
@@ -69,14 +69,15 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
         ensureParentDirExist(newFile);
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
+            logger.info("Encrypt Text of {}", oldFile);
             final byte[] encrypt = new JavaPasswordbasedCryption(JavaPasswordbasedCryption.Version.V001, random)
                     .encrypt(String.join(System.lineSeparator(), Files.readAllLines(oldFile)), password.clone());
             Files.write(newFile, encrypt);
             Files.setLastModifiedTime(newFile, lastModifiedTimeOldFile);
         } else if (Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) == 0) {
-            logger.info("{} has same modification time than {} and will not be encrypt.", newFile, oldFile);
+            logger.debug("{} has same modification time than {} and will not be encrypt.", newFile, oldFile);
         } else {
-            logger.warn("{} is newer than {} and will not be encrypt.", newFile, oldFile);
+            logger.debug("{} is newer than {} and will not be encrypt.", newFile, oldFile);
         }
     }
 
@@ -97,7 +98,6 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
                     })
                     .forEach(it -> {
                         try {
-                            logger.debug("Decrypt Text of {}", it);
                             decryptText(password, it);
                         } catch (IOException | JavaPasswordbasedCryption.EncryptionFailedException e) {
                             logger.error("Can't decrypt " + it, e);
@@ -114,15 +114,16 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
         ensureParentDirExist(newFile);
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
+            logger.info("Decrypt Text of {}", oldFile);
             final byte[] encryptedBytes = Files.readAllBytes(oldFile);
             final String decrypt = JavaPasswordbasedCryption.getDecyptedText(encryptedBytes, password.clone());
             final List<String> lines = Arrays.asList(decrypt.split("[\\r\\n]+"));
             Files.write(newFile, lines, StandardCharsets.UTF_8);
             Files.setLastModifiedTime(newFile, lastModifiedTimeOldFile);
         } else if (Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) == 0) {
-            logger.info("{} has same modification time than {} and will not be decrypted.", newFile, oldFile);
+            logger.debug("{} has same modification time than {} and will not be decrypted.", newFile, oldFile);
         } else {
-            logger.warn("{} is newer than {} and will not be decrypted.", newFile, oldFile);
+            logger.debug("{} is newer than {} and will not be decrypted.", newFile, oldFile);
         }
     }
 
