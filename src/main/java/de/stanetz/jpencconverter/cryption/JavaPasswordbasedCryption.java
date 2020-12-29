@@ -59,7 +59,7 @@ public class JavaPasswordbasedCryption {
     /**
      * Decrypt the text.
      *
-     * @param encryptedText encrypeted text as bytes.
+     * @param encryptedText encrypted text as bytes.
      * @param password      the password <b>Warning!</b> the array will be filled with 0!
      * @return decrypted text.
      */
