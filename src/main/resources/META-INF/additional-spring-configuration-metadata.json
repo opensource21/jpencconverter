@@ -29,6 +29,11 @@
       "name": "password",
       "type": "java.lang.String",
       "description": "The password for cryptografie. [Optional]"
+    },
+    {
+      "name": "encryption.version",
+      "type": "java.lang.String",
+      "description": "Define the version which should be use for encryption. Default V001. [Optional]"
     }
   ]
 }

@@ -39,6 +39,9 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
     @Value("#{'${extensions.plainText}'.split(',')}")
     private List<String> plainTextExtensions;
 
+    @Value("${encryption.version:V001}")
+    private JavaPasswordbasedCryption.Version encryptionVersion = JavaPasswordbasedCryption.Version.V001;
+
     // This could be interesting in future-versions.
 //    @Value("#{'${extensions.plainBin}'.split(',')}")
 //    private List<String> plainBinExtensions;
@@ -70,7 +73,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
         final FileTime lastModifiedTimeOldFile = Files.getLastModifiedTime(oldFile);
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
             logger.info("Encrypt Text of {}", oldFile);
-            final byte[] encrypt = new JavaPasswordbasedCryption(JavaPasswordbasedCryption.Version.V001, random)
+            final byte[] encrypt = new JavaPasswordbasedCryption(encryptionVersion, random)
                     .encrypt(String.join(System.lineSeparator(), Files.readAllLines(oldFile)), password.clone());
             Files.write(newFile, encrypt);
             Files.setLastModifiedTime(newFile, lastModifiedTimeOldFile);
