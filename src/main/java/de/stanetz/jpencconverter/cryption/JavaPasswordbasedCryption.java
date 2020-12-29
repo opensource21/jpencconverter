@@ -35,6 +35,16 @@ public class JavaPasswordbasedCryption {
     private final Random random;
 
     /**
+     * Create a new Instance of the given android api version.
+     *
+     * @param random     strongest SecureRandom.getInstanceStrong(), which could be very slow.  A compromise could be SecureRandom.getInstance("SHA1PRNG") or new SecureRandom.
+     * @param apiVersion the android api-version which is used to search for the best version.
+     */
+    public JavaPasswordbasedCryption(int apiVersion, Random random) {
+        this(getVersionForAndroid(apiVersion), random);
+    }
+
+    /**
      * Create a new Instance of the given version.
      *
      * @param random  strongest SecureRandom.getInstanceStrong(), which could be very slow.  A compromise could be SecureRandom.getInstance("SHA1PRNG") or new SecureRandom.
@@ -43,6 +53,17 @@ public class JavaPasswordbasedCryption {
     public JavaPasswordbasedCryption(Version version, Random random) {
         this.version = version;
         this.random = random;
+    }
+
+
+    private static Version getVersionForAndroid(int apiVersion) {
+        if (apiVersion >= 26) {
+            return Version.V001;
+        } else if (apiVersion >= 23) {
+            return Version.U001;
+        } else {
+            throw new IllegalArgumentException("Minimal API-Version is 23, so " + apiVersion + " isn't supported");
+        }
     }
 
     /**
@@ -163,7 +184,7 @@ public class JavaPasswordbasedCryption {
 
     private Cipher getCipher(SecretKey key, int encryptMode, byte[] nonce) throws
             NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
-        if (version == Version.V001) {
+        if (version == Version.V001 || version == Version.U001) {
             Cipher cipher = Cipher.getInstance(version.cipher);
             GCMParameterSpec spec = new GCMParameterSpec(16 * 8, nonce);
             cipher.init(encryptMode, key, spec);
@@ -195,9 +216,18 @@ public class JavaPasswordbasedCryption {
 
     /**
      * Version of encryption.
+     * Version which starts with an U are Versions which are unsecure compared to a V-Version.
      */
     public enum Version {
-        V001("PBKDF2WithHmacSHA512", 10000, 256, "AES", 64, "AES/GCM/NoPadding", 32);
+        V001("PBKDF2WithHmacSHA512", 10000, 256, "AES", 64, "AES/GCM/NoPadding", 32),
+
+        /**
+         * Weaker version of V001. Needed for old android-devices.
+         *
+         * @deprecated please use {@link #V001} if possible.
+         */
+        @Deprecated
+        U001("PBKDF2WithHmacSHA1", 10000, 256, "AES", 64, "AES/GCM/NoPadding", 32);
 
         /**
          * Define the length of the Versionnames.
