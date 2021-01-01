@@ -119,7 +119,7 @@ public class FileEncryptionServiceImpl implements FileEncryptionService {
         if (Files.notExists(newFile) || Files.getLastModifiedTime(newFile).compareTo(lastModifiedTimeOldFile) < 0) {
             logger.info("Decrypt Text of {}", oldFile);
             final byte[] encryptedBytes = Files.readAllBytes(oldFile);
-            final String decrypt = JavaPasswordbasedCryption.getDecyptedText(encryptedBytes, password.clone());
+            final String decrypt = JavaPasswordbasedCryption.getDecryptedText(encryptedBytes, password.clone());
             final List<String> lines = Arrays.asList(decrypt.split("[\\r\\n]+"));
             Files.write(newFile, lines, StandardCharsets.UTF_8);
             Files.setLastModifiedTime(newFile, lastModifiedTimeOldFile);

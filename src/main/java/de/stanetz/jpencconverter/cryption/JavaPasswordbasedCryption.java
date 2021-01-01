@@ -84,7 +84,7 @@ public class JavaPasswordbasedCryption {
      * @param password      the password <b>Warning!</b> the array will be filled with 0!
      * @return decrypted text.
      */
-    public static String getDecyptedText(byte[] encryptedText, char[] password) {
+    public static String getDecryptedText(byte[] encryptedText, char[] password) {
         return new JavaPasswordbasedCryption(getVersion(encryptedText), null).decrypt(encryptedText, password);
     }
 

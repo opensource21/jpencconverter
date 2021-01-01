@@ -101,7 +101,7 @@ class JpencConverterApplicationTests {
 
     private List<String> decryptText(Path file) throws IOException, JavaPasswordbasedCryption.EncryptionFailedException {
         final byte[] encryptedBytes = Files.readAllBytes(file);
-        final String decrypt = JavaPasswordbasedCryption.getDecyptedText(encryptedBytes, password.toCharArray());
+        final String decrypt = JavaPasswordbasedCryption.getDecryptedText(encryptedBytes, password.toCharArray());
 
         return Arrays.asList(decrypt.split("[\\r\\n]+"));
     }
