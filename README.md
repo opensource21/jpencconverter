@@ -15,3 +15,5 @@ Look at the `application.properties` for further detail and spring-boot-document
 The properties are described in `src/main/resources/META-INF/additional-spring-configuration-metadata.json`
 
 You can configure logging via log4j2.
+
+The format of the encrypted files is described in [JavaPasswordbasedCryption](https://gitlab.com/opensource21/jpencconverter/-/blob/master/src/main/java/de/stanetz/jpencconverter/cryption/JavaPasswordbasedCryption.java). The format is used in [markor](https://github.com/gsantner/markor).
