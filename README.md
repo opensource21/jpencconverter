@@ -2,7 +2,13 @@
 
 Passwordbased encryption in java for primary markdown-files. 
 
-Configure application.properties and start with 
+Download release from [release-page](https://gitlab.com/opensource21/jpencconverter/-/releases)
+for example [0.2.1-Zip](https://gitlab.com/opensource21/jpencconverter/uploads/f24f4048f92a7303f41460a6d6bab983/jpenc-converter.zip)
+
+Unzip into a folder jpencconverter (or foo if you prefer this name). I will refer it with basedir.
+Rename the `application.properties.sample` to `application.properties` in the basedir.
+Edit the `application.properties` following the comments. It's up to you if you want to save the password or insert it at every start.
+Go into the folder basedir with a command-shell and start with 
 `java -jar <jar-file> <mode>`
 
 Mode could be:
