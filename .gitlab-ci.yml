@@ -49,13 +49,11 @@ package:
       - target/*.jar
       - $ZIP_NAME
 
-publish:
-  # See https://github.com/inetprocess/gitlab-release/blob/master/README.md for Details
-  ## Set a secret variable in your project named GITLAB_ACCESS_TOKEN with api-access-Token
-  image: inetprocess/gitlab-release
-  stage: publish
-  only:
-    - tags
-  script:
-    - gitlab-release --message "$CI_COMMIT_MESSAGE" $ZIP_NAME target/jpencconverter*.jar
 
+publish:
+  stage: publish
+  image: curlimages/curl
+  rules:
+    - if: '$CI_COMMIT_TAG && $GITLAB_ACCESS_TOKEN'
+  script:
+    - curl --header "PRIVATE-TOKEN:$GITLAB_ACCESS_TOKEN" --upload-file $ZIP_NAME "$CI_API_V4_URL/projects/${CI_PROJECT_ID}/packages/generic/jpencconverter/$CI_COMMIT_TAG/$ZIP_NAME"
