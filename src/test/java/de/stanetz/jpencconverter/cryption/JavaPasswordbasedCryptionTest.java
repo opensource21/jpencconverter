@@ -3,11 +3,13 @@ package de.stanetz.jpencconverter.cryption;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import sun.nio.cs.US_ASCII;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JavaPasswordbasedCryptionTest {
 
@@ -35,6 +37,25 @@ public class JavaPasswordbasedCryptionTest {
         System.out.println(text);
         directTest(password, text);
         convenientTest(password, text);
+    }
+
+    @Test
+    public void decryptEmptyByte() {
+        final String password = "geheim";
+        final byte[] text = new byte[0];
+        assertEquals("", JavaPasswordbasedCryption.getDecryptedText(text, password.toCharArray()));
+    }
+
+    @Test
+    public void versionTest() {
+        JavaPasswordbasedCryption.Version actual = JavaPasswordbasedCryption.getVersion("V001".getBytes(StandardCharsets.US_ASCII));
+        assertEquals(actual, JavaPasswordbasedCryption.Version.V001);
+    }
+
+    @Test
+    public void versionTestException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> JavaPasswordbasedCryption.getVersion("V01".getBytes(StandardCharsets.US_ASCII)));
     }
 
     private void convenientTest(String password, String text) {

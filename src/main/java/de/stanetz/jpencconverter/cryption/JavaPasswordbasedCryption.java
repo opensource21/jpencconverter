@@ -73,6 +73,10 @@ public class JavaPasswordbasedCryption {
      * @return the used version.
      */
     public static Version getVersion(byte[] encryptedText) {
+        if (encryptedText.length < Version.NAME_LENGTH) {
+            throw new IllegalArgumentException("the encrypted text must be a least contains the version. " +
+                    "Current length: " + encryptedText.length + " expected length: " + Version.NAME_LENGTH);
+        }
         final byte[] versionBytes = Arrays.copyOfRange(encryptedText, 0, Version.NAME_LENGTH);
         return Version.valueOf(new String(versionBytes, StandardCharsets.US_ASCII));
     }
@@ -85,6 +89,9 @@ public class JavaPasswordbasedCryption {
      * @return decrypted text.
      */
     public static String getDecryptedText(byte[] encryptedText, char[] password) {
+        if (encryptedText.length == 0) {
+            return "";
+        }
         return new JavaPasswordbasedCryption(getVersion(encryptedText), null).decrypt(encryptedText, password);
     }
 
