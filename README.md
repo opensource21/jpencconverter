@@ -3,7 +3,7 @@
 Passwordbased encryption in java for primary markdown-files.
 
 Download release from [Generic-Repo](https://gitlab.com/opensource21/jpencconverter/-/packages)
-for example [0.3.1-Zip](https://gitlab.com/api/v4/projects/17774573/packages/generic/jpencconverter/0.3.1
+for example [0.3.1-Zip](https://gitlab.com/api/v4/projects/17774573/packages/generic/jpencconverter/v0.3.1
 /jpenc-converter.zip)
 
 Unzip into a folder jpencconverter (or foo if you prefer this name). I will refer it with basedir.
