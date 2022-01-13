@@ -10,7 +10,7 @@
     </parent>
     <groupId>de.stanetz</groupId>
     <artifactId>jpencconverter</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.2</version>
     <name>jpencconverter</name>
     <description>Konverter to de- or encrypt java password based encryption files.</description>
 
